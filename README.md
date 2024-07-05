@@ -103,8 +103,8 @@ Para los laboratorios usando el lenguaje Java se recomienda usar el siguiente ID
 - $javac hello.java
 - $java hello
 
-## Arbol Binario de Búsqueda (BST) 
-El  árbol de búsqueda binaria es un  árbol binario con la siguiente propiedad : Todos los nodos del sub árbol izquierdo de un nodo x son menores o iguales que x y todos los nodos del sub árbol derecho son mayores o iguales que x.
+## Tries
+Un árbol Trie, o árbol de prefijos, es una estructura de datos que almacena cadenas de manera eficiente compartiendo prefijos comunes.
 
 
 
