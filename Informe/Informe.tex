@@ -222,18 +222,231 @@
 %%%%%%%%%%%%
 
   \subsection{TrieNode}
+  \begin{itemize}
+    \item \textbf{Descripción: }La clase TrieNode representa un nodo en un trie, una estructura de datos utilizada para almacenar 
+    cadenas de caracteres. Cada nodo tiene dos atributos: children, que es un mapa que asocia cada carácter a su nodo hijo 
+    correspondiente, y frequency, un entero que cuenta cuántas veces una palabra termina en este nodo. El constructor inicializa 
+    el mapa de hijos como un HashMap vacío y la frecuencia a 0. Esta clase es fundamental para construir y operar sobre un trie.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Clase TrieNode}]
+      import java.util.*;
+      class TrieNode {
+          Map<Character, TrieNode> children;
+          int frequency;
+
+          public TrieNode() {
+              children = new HashMap<>();
+              frequency = 0;
+          }
+      }
+    \end{lstlisting}
+  \end{itemize}
   
 %%%%%%%%%%%%
 
   \subsection{Trie}
   
+%%%%%%
+  
+  \subsubsection{Definición de clase Trie}
+  \begin{itemize}
+    \item \textbf{Descripción: }Esta sección define la clase Trie y su constructor. La clase contiene un nodo raíz de tipo TrieNode.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Clase Trie}]
+        import java.util.*;
+        class Trie {
+            private TrieNode root;
+
+            public Trie() {
+                root = new TrieNode();
+            }
+    \end{lstlisting}
+  \end{itemize}
+    
+%%%%%%
+  
+  \subsubsection{Método Insertar}
+  \begin{itemize}
+    \item \textbf{Descripción: }Este método inserta una palabra en el trie. Recorre cada carácter de la palabra y actualiza los nodos correspondientes. Si un carácter no existe, 
+    se crea un nuevo nodo.
+    \item \textbf{Código: } 
+    \begin{lstlisting}[language=Java, caption={Método Insertar}]
+        public void insert(String word) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                if (!node.children.containsKey(c)) {
+                    node.children.put(c, new TrieNode());
+                }
+                node = node.children.get(c);
+            }
+            node.frequency++;
+        }
+    \end{lstlisting}
+  \end{itemize}
+    
+%%%%%%
+  
+  \subsubsection{Método Search}
+  \begin{itemize}
+    \item \textbf{Descripción: }Este método busca una palabra en el trie. Devuelve true si la palabra existe (es decir, si su frecuencia es mayor que 0), 
+    de lo contrario, devuelve false.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Método Search}]
+        public boolean search(String word) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                if (!node.children.containsKey(c)) {
+                    return false;
+                }
+                node = node.children.get(c);
+            }
+            return node.frequency > 0;
+        }
+    \end{lstlisting}
+  \end{itemize}
+    
+    
+%%%%%%
+  
+  \subsubsection{Método replaceWords}
+  \begin{itemize}
+    \item \textbf{Descripción: }Este método reemplaza todas las palabras en un texto que se encuentran en el trie con una palabra de reemplazo dada. 
+    Devuelve el texto modificado.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Método replaceWords}]
+        public String replaceWords(String text, String replacement) {
+            String[] words = text.split("\\s+");
+            StringBuilder result = new StringBuilder();
+
+            for (String word : words) {
+                if (search(word)) {
+                    result.append(replacement).append(" ");
+                } else {
+                    result.append(word).append(" ");
+                }
+            }
+
+            return result.toString().trim();
+        }
+    \end{lstlisting}
+  \end{itemize}
+    
+%%%%%%
+  
+  \subsubsection{Método getTopKFrequentWords}
+  \begin{itemize}
+    \item \textbf{Descripción: }Este método devuelve una lista con las k palabras más frecuentes en el trie. Utiliza un mapa para almacenar las frecuencias y 
+    las ordena para encontrar las palabras más comunes.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Método getTopKFrequentWords}]
+        public List<String> getTopKFrequentWords(int k) {
+            // Usamos un mapa para almacenar las frecuencias de las palabras
+            Map<String, Integer> wordFrequencyMap = new HashMap<>();
+            collectWords(root, "", wordFrequencyMap);
+
+            // Convertimos el mapa a una lista de entradas y ordenamos por frecuencia
+            List<Map.Entry<String, Integer>> entries = new ArrayList<>(wordFrequencyMap.entrySet());
+            entries.sort((a, b) -> b.getValue() - a.getValue());
+
+            // Obtenemos las primeras k palabras mas frecuentes
+            List<String> topKWords = new ArrayList<>();
+            for (int i = 0; i < k && i < entries.size(); i++) {
+                topKWords.add(entries.get(i).getKey());
+            }
+
+            return topKWords;
+        }
+    \end{lstlisting}
+  \end{itemize}
+  
+%%%%%%
+  
+  \subsubsection{Método collectWords}
+  \begin{itemize}
+    \item \textbf{Descripción: } Este método auxiliar recolecta todas las palabras en el trie junto con sus frecuencias. Se usa recursivamente para recorrer todos los nodos del trie y 
+    actualizar el mapa de frecuencias.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Método collectWords}]
+        private void collectWords(TrieNode node, String prefix, Map<String, Integer> wordFrequencyMap) {
+            if (node == null) {
+                return;
+            }
+            if (node.frequency > 0) {
+                wordFrequencyMap.put(prefix, node.frequency);
+            }
+            for (Map.Entry<Character, TrieNode> entry : node.children.entrySet()) {
+                collectWords(entry.getValue(), prefix + entry.getKey(), wordFrequencyMap);
+            }
+            
+        }
+    \end{lstlisting}
+  \end{itemize}
+  
 %%%%%%%%%%%%
 
   \subsection{TopKFrequendtWords}
+  \begin{itemize}
+    \item \textbf{Descripción: }El código define una clase TopKFrequentWords que utiliza la estructura de datos Trie para realizar varias operaciones relacionadas con 
+    palabras y sus frecuencias. La clase Trie se utiliza para insertar, buscar y reemplazar palabras, así como para obtener las palabras 
+    más frecuentes. El método main de la clase TopKFrequentWords se encarga de demostrar estas funcionalidades.
+    \item \textbf{Código: }
+    \begin{lstlisting}[language=Java, caption={Clase Principal}]
+        import java.util.*;
+        public class TopKFrequentWords {
+             public static void main(String[] args) {
+                Trie trie = new Trie();
+                trie.insert("will");
+                trie.insert("win");
+                trie.insert("wish");
+                trie.insert("war");
+                trie.insert("war");
+                trie.insert("war");
+                trie.insert("war");
+                trie.insert("want");
+                trie.insert("warp");
+                trie.insert("warp");
+                trie.insert("warp");
+                trie.insert("want");
+                trie.insert("warp");
+                trie.insert("wee");
+                trie.insert("wee");
+                
+                System.out.println("Search 'will': " + trie.search("will")); 
+                System.out.println("Search 'wee': " + trie.search("wee")); 
+                System.out.println("Search 'hi': " + trie.search("hi")); 
+                System.out.println("Search 'wanted': " + trie.search("wanted")); 
+
+                String text = "hello";
+                String replacedText = trie.replaceWords(text, "warp");
+                System.out.println("Replaced Text: " + replacedText); // REPLACED REPLACED REPLACED hola
+
+                List<String> topWords = trie.getTopKFrequentWords(2);
+                System.out.println("Top 2 Frequent Words: " + topWords); // [hello, world]
+            }
+        }
+    \end{lstlisting}
+    \item \textbf{Ejecución: }
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1\textwidth, keepaspectratio]{img/cmd1.png}
+      \caption{Trie -- Ejecución}
+    \end{figure}
+  \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%
 
   \section{Conclusiones}
+  \begin{enumerate}
+    \item \textbf{Eficiencia}: Los tries son eficientes para buscar y almacenar cadenas, con operaciones de inserción, búsqueda 
+    y eliminación en tiempo proporcional a la longitud de la cadena.
+    \item \textbf{Autocompletado}: Son ideales para autocompletado y sugerencias de palabras, permitiendo búsquedas rápidas de prefijos.  
+    \item \textbf{Memoria}: Pueden consumir más memoria debido a múltiples nodos y punteros, pero evitan la duplicación de 
+    prefijos comunes.  
+    \item \textbf{Frecuencias}: Pueden manejar frecuencias de palabras para análisis estadísticos y encontrar palabras comunes.
+    \item \textbf{Aplicaciones}: Se utilizan en corrección ortográfica, procesamiento de lenguaje natural y compresión de datos.   
+    \item \textbf{Flexibilidad}: Su implementación es simple y se puede extender para incluir información adicional, como 
+    frecuencias de palabras.
+  \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%
 	\newpage
