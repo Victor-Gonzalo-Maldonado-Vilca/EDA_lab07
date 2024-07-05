@@ -42,15 +42,6 @@ class Trie {
 
         return result.toString().trim();
     }
-    
-    private void replaceAndUpdate(String word, String replacement) {
-        TrieNode node = root;
-        for (char c : word.toCharArray()) {
-            node = node.children.get(c);
-        }
-        node.frequency--; // Decrementa la frecuencia de la palabra original
-        insert(replacement); // Inserta la palabra de reemplazo en el árbol Trie
-    }
 
     public List<String> getTopKFrequentWords(int k) {
         // Usamos un mapa para almacenar las frecuencias de las palabras
